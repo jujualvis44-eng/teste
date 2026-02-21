@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcar Consulta - Sistema Agendamento</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 30%, #fbbf24 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            margin-top: 20px;
+        }
+
+        .header h1 {
+            font-size: 36px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .appointment-form {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 3px solid #fbbf24;
+        }
+
+        .appointment-form h2 {
+            color: #7c3aed;
+            margin-bottom: 25px;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="time"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus,
+        input[type="tel"]:focus,
+        input[type="date"]:focus,
+        input[type="time"]:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #7c3aed;
+            box-shadow: 0 0 0 4px rgba(124, 58, 237, 0.1);
+            background: #f8f4ff;
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237c3aed' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 35px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .time-slot {
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 13px;
+            font-weight: 600;
+            background: white;
+        }
+
+        .time-slot:hover {
+            border-color: #7c3aed;
+            background: #f8f4ff;
+            transform: translateY(-2px);
+        }
+
+        .time-slot.selected {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            border-color: #6d28d9;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+        }
+
+        .btn-reset {
+            background: white;
+            color: #7c3aed;
+            border: 2px solid #7c3aed;
+        }
+
+        .btn-reset:hover {
+            background: #f8f4ff;
+        }
+
+        .error-message {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border: 2px solid #f87171;
+            border-left: 5px solid #dc2626;
+        }
+
+        .success-message {
+            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+            color: #166534;
+            padding: 12px 14px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+            border: 2px solid #86efac;
+            border-left: 5px solid #22c55e;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 2px solid #fbbf24;
+        }
+
+        .card h3 {
+            color: #7c3aed;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .specialist-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #e5e7eb;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            padding-left: 10px;
+            border-left: 3px solid transparent;
+        }
+
+        .specialist-item:last-child {
+            border-bottom: none;
+        }
+
+        .specialist-item:hover {
+            background: #f8f4ff;
+            border-left-color: #7c3aed;
+            transform: translateX(3px);
+        }
+
+        .specialist-item .name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .specialist-item .specialty {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        .spinner {
+            border: 3px solid #f0f0f0;
+            border-top: 3px solid #7c3aed;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .calendar-preview {
+            background: #f8f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .calendar-preview p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: all 0.3s ease;
+        }
+
+        .day-cell:hover {
+            background: #fbbf24;
+            color: white;
+        }
+
+        .day-cell.selected {
+            background: #7c3aed;
+            color: white;
+            font-weight: bold;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .status-available {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status-busy {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .header h1 {
+                font-size: 28px;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .time-slots {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📅 Marcar Consulta</h1>
+        <p>Escolha o dia e hora que melhor se adequa a você</p>
+    </div>
+
+    <div class="container">
+        <div class="main-content">
+            <!-- Formulário de Agendamento -->
+            <div class="appointment-form">
+                <h2>📋 Dados da Consulta</h2>
+
+                <div class="error-message" id="errorMessage"></div>
+                <div class="success-message" id="successMessage"></div>
+
+                <form id="appointmentForm" onsubmit="handleSubmit(event)">
+                    <!-- Nome do Paciente -->
+                    <div class="form-group">
+                        <label for="patientName">👤 Nome Completo</label>
+                        <input 
+                            type="text" 
+                            id="patientName" 
+                            placeholder="Digite seu nome completo" 
+                            required
+                        >
+                    </div>
+
+                    <!-- Email -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientEmail">📧 Email</label>
+                            <input 
+                                type="email" 
+                                id="patientEmail" 
+                                placeholder="seu.email@exemplo.com" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="patientPhone">📱 Telefone</label>
+                            <input 
+                                type="tel" 
+                                id="patientPhone" 
+                                placeholder="(11) 99999-9999" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Especialidade -->
+                    <div class="form-group">
+                        <label for="specialty">🏥 Especialidade</label>
+                        <select id="specialty" onchange="updateAvailableSpecialists()" required>
+                            <option value="">-- Selecione uma especialidade --</option>
+                            <option value="cardiologia">Cardiologia</option>
+                            <option value="dermatologia">Dermatologia</option>
+                            <option value="ortopedia">Ortopedia</option>
+                            <option value="oftalmologia">Oftalmologia</option>
+                            <option value="pediatria">Pediatria</option>
+                            <option value="neurologia">Neurologia</option>
+                        </select>
+                    </div>
+
+                    <!-- Médico/Profissional -->
+                    <div class="form-group">
+                        <label for="specialist">👨‍⚕️ Médico/Profissional</label>
+                        <select id="specialist" required>
+                            <option value="">-- Selecione um profissional --</option>
+                        </select>
+                    </div>
+
+                    <!-- Data -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appointmentDate">📆 Data da Consulta</label>
+                            <input 
+                                type="date" 
+                                id="appointmentDate" 
+                                onchange="updateAvailableHours()" 
+                                required
+                            >
+                        </div>
+                        <div class="form-group">
+                            <label for="preferredTime">🕐 Hora Preferida</label>
+                            <input 
+                                type="time" 
+                                id="preferredTime" 
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <!-- Horários Disponíveis -->
+                    <div class="form-group">
+                        <label>⏰ Horários Disponíveis</label>
+                        <div class="time-slots" id="timeSlotsContainer">
+                            <!-- Preenchido por JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Descrição/Motivo -->
+                    <div class="form-group">
+                        <label for="reason">💬 Motivo da Consulta</label>
+                        <textarea 
+                            id="reason" 
+                            placeholder="Descreva brevemente o motivo da sua consulta..."
+                        ></textarea>
+                    </div>
+
+                    <!-- Informações Adicionais -->
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="agreeTerm">
+                            Concordo com os termos e condições
+                        </label>
+                    </div>
+
+                    <!-- Botões -->
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-submit">📤 Agendar Consulta</button>
+                        <button type="reset" class="btn btn-reset">🔄 Limpar</button>
+                    </div>
+
+                    <div class="loading" id="loading">
+                        <div class="spinner"></div>
+                        <p style="margin-top: 10px; color: #666; font-size: 14px;">Processando...</p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="sidebar">
+                <!-- Resumo Agendamento -->
+                <div class="card">
+                    <h3>📝 Resumo</h3>
+                    <div id="appointmentSummary" style="color: #666; font-size: 14px; line-height: 1.8;">
+                        <p>Nenhuma seleção feita ainda</p>
+                    </div>
+                </div>
+
+                <!-- Próximas Datas Disponíveis -->
+                <div class="card">
+                    <h3>📅 Próximas Datas</h3>
+                    <div id="nextDates">
+                        <!-- Preenchido por JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Lista de Profissionais -->
+                <div class="card">
+                    <h3>👨‍⚕️ Especialistas</h3>
+                    <div id="specialistsList">
+                        <p style="color: #666; font-size: 13px;">Selecione uma especialidade acima</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados dos especialistas
+        const specialists = {
+            cardiologia: [
+                { name: 'Dr. João Silva', crm: '123456', available: true },
+                { name: 'Dra. Marina Costa', crm: '234567', available: true },
+                { name: 'Dr. Pedro Santos', crm: '345678', available: false }
+            ],
+            dermatologia: [
+                { name: 'Dra. Ana Paula', crm: '456789', available: true },
+                { name: 'Dr. Carlos Mendes', crm: '567890', available: true },
+                { name: 'Dra. Juliana Rocha', crm: '678901', available: false }
+            ],
+            ortopedia: [
+                { name: 'Dr. Roberto Ferreira', crm: '789012', available: true },
+                { name: 'Dr. André Lourenço', crm: '890123', available: true },
+                { name: 'Dra. Fernanda Lima', crm: '901234', available: true }
+            ],
+            oftalmologia: [
+                { name: 'Dr. Lucas Martins', crm: '012345', available: true },
+                { name: 'Dra. Beatriz Oliveira', crm: '123450', available: true }
+            ],
+            pediatria: [
+                { name: 'Dra. Camila Alves', crm: '234501', available: true },
+                { name: 'Dr. Felipe Gomes', crm: '345012', available: false }
+            ],
+            neurologia: [
+                { name: 'Dr. Marcelo Ribeiro', crm: '456023', available: true },
+                { name: 'Dra. Gabriela Pereira', crm: '567034', available: true }
+            ]
+        };
+
+        // Horários disponíveis
+        const availableHours = [
+            '08:00', '08:30', '09:00', '09:30', '10:00', '10:30',
+            '14:00', '14:30', '15:00', '15:30', '16:00', '16:30'
+        ];
+
+        // Inicializar
+        window.addEventListener('load', function() {
+            generateNextDates();
+            generateTimeSlots();
+            setupEventListeners();
+        });
+
+        function setupEventListeners() {
+            document.getElementById('patientName').addEventListener('change', updateSummary);
+            document.getElementById('patientEmail').addEventListener('change', updateSummary);
+            document.getElementById('specialty').addEventListener('change', updateSummary);
+            document.getElementById('specialist').addEventListener('change', updateSummary);
+            document.getElementById('appointmentDate').addEventListener('change', updateSummary);
+            document.getElementById('reason').addEventListener('change', updateSummary);
+        }
+
+        function updateAvailableSpecialists() {
+            const specialty = document.getElementById('specialty').value;
+            const specialistSelect = document.getElementById('specialist');
+            const specialistsList = document.getElementById('specialistsList');
+
+            specialistSelect.innerHTML = '<option value="">-- Selecione um profissional --</option>';
+            specialistsList.innerHTML = '';
+
+            if (specialty && specialists[specialty]) {
+                specialists[specialty].forEach((spec, index) => {
+                    const option = document.createElement('option');
+                    option.value = spec.name;
+                    option.textContent = spec.name + (spec.available ? '' : ' (Indisponível)');
+                    option.disabled = !spec.available;
+                    specialistSelect.appendChild(option);
+
+                    const item = document.createElement('div');
+                    item.className = 'specialist-item';
+                    item.innerHTML = `
+                        <div class="name">${spec.name}</div>
+                        <div class="specialty">CRM: ${spec.crm}</div>
+                        <span class="status-badge ${spec.available ? 'status-available' : 'status-busy'}">
+                            ${spec.available ? '✓ Disponível' : '✗ Indisponível'}
+                        </span>
+                    `;
+                    specialistsList.appendChild(item);
+                });
+            }
+
+            updateSummary();
+        }
+
+        function generateTimeSlots() {
+            const container = document.getElementById('timeSlotsContainer');
+            container.innerHTML = '';
+
+            availableHours.forEach(hour => {
+                const slot = document.createElement('div');
+                slot.className = 'time-slot';
+                slot.textContent = hour;
+                slot.onclick = () => selectTimeSlot(slot, hour);
+                container.appendChild(slot);
+            });
+        }
+
+        function updateAvailableHours() {
+            const date = new Date(document.getElementById('appointmentDate').value);
+            const dayOfWeek = date.getDay();
+
+            // Domingos e feriados não há agendamento
+            if (dayOfWeek === 0) {
+                showError('❌ Não é possível agendar no domingo. Selecione outro dia.');
+                document.getElementById('appointmentDate').value = '';
+                return;
+            }
+
+            generateTimeSlots();
+            updateSummary();
+        }
+
+        function selectTimeSlot(element, hour) {
+            // Remove seleção anterior
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+
+            // Marca como selecionado
+            element.classList.add('selected');
+            document.getElementById('preferredTime').value = hour;
+            updateSummary();
+        }
+
+        function generateNextDates() {
+            const container = document.getElementById('nextDates');
+            container.innerHTML = '';
+
+            for (let i = 1; i <= 5; i++) {
+                const date = new Date();
+                date.setDate(date.getDate() + i);
+
+                if (date.getDay() !== 0) { // Pula domingos
+                    const dateStr = date.toLocaleDateString('pt-BR', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: '2-digit', 
+                        day: '2-digit' 
+                    });
+
+                    const dateBtn = document.createElement('div');
+                    dateBtn.style.cssText = 'padding: 8px; background: #f0f0f0; border-radius: 6px; cursor: pointer; font-size: 13px; transition: all 0.3s; margin-bottom: 8px;';
+                    dateBtn.textContent = dateStr;
+                    dateBtn.onmouseover = () => dateBtn.style.background = '#fbbf24';
+                    dateBtn.onmouseout = () => dateBtn.style.background = '#f0f0f0';
+                    dateBtn.onclick = () => {
+                        document.getElementById('appointmentDate').value = date.toISOString().split('T')[0];
+                        updateAvailableHours();
+                    };
+
+                    container.appendChild(dateBtn);
+                }
+            }
+        }
+
+        function updateSummary() {
+            const summary = document.getElementById('appointmentSummary');
+            const name = document.getElementById('patientName').value;
+            const email = document.getElementById('patientEmail').value;
+            const specialty = document.getElementById('specialty').selectedOptions[0]?.text || '-';
+            const specialist = document.getElementById('specialist').value || '-';
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('preferredTime').value;
+
+            const dateFormatted = date ? new Date(date + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+            const timeFormatted = time || '-';
+
+            summary.innerHTML = `
+                <p><strong>Nome:</strong> ${name || '-'}</p>
+                <p><strong>Email:</strong> ${email || '-'}</p>
+                <p><strong>Especialidade:</strong> ${specialty}</p>
+                <p><strong>Profissional:</strong> ${specialist}</p>
+                <p><strong>Data:</strong> ${dateFormatted}</p>
+                <p><strong>Hora:</strong> ${timeFormatted}</p>
+            `;
+        }
+
+        function handleSubmit(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('patientName').value.trim();
+            const email = document.getElementById('patientEmail').value.trim();
+            const phone = document.getElementById('patientPhone').value.trim();
+            const specialty = document.getElementById('specialty').value;
+            const specialist = document.getElementById('specialist').value;
+            const date = document.getElementById('appointmentDate').value;
+            const time = document.getElementById('preferredTime').value;
+            const reason = document.getElementById('reason').value.trim();
+            const agreed = document.getElementById('agreeTerm').checked;
+
+            if (!name || !email || !phone || !specialty || !specialist || !date || !time) {
+                showError('❌ Por favor, preencha todos os campos obrigatórios!');
+                return;
+            }
+
+            if (!agreed) {
+                showError('❌ Você deve concordar com os termos e condições!');
+                return;
+            }
+
+            // Mostrar loading
+            document.getElementById('loading').style.display = 'block';
+            event.target.style.opacity = '0.6';
+            event.target.style.pointerEvents = 'none';
+
+            // Simular requisição ao servidor
+            setTimeout(() => {
+                const dateFormatted = new Date(date + 'T00:00:00').toLocaleDateString('pt-BR');
+                showSuccess(`✅ Consulta agendada com sucesso!\n\n${specialist}\n${dateFormatted} às ${time}`);
+
+                setTimeout(() => {
+                    document.getElementById('appointmentForm').reset();
+                    document.getElementById('loading').style.display = 'none';
+                    event.target.style.opacity = '1';
+                    event.target.style.pointerEvents = 'auto';
+                    updateSummary();
+                }, 2000);
+            }, 1500);
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            document.getElementById('successMessage').style.display = 'none';
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showSuccess(message) {
+            const successDiv = document.getElementById('successMessage');
+            successDiv.textContent = message;
+            successDiv.style.display = 'block';
+            document.getElementById('errorMessage').style.display = 'none';
+            successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Validar data mínima (hoje)
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('appointmentDate').setAttribute('min', today);
+    </script>
+</body>
+</html>
