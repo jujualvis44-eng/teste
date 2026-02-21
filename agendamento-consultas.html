@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -287,8 +288,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .calendar-preview {
@@ -376,6 +382,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="header">
         <h1>📅 Marcar Consulta</h1>
@@ -395,33 +402,18 @@
                     <!-- Nome do Paciente -->
                     <div class="form-group">
                         <label for="patientName">👤 Nome Completo</label>
-                        <input 
-                            type="text" 
-                            id="patientName" 
-                            placeholder="Digite seu nome completo" 
-                            required
-                        >
+                        <input type="text" id="patientName" placeholder="Digite seu nome completo" required>
                     </div>
 
                     <!-- Email -->
                     <div class="form-row">
                         <div class="form-group">
                             <label for="patientEmail">📧 Email</label>
-                            <input 
-                                type="email" 
-                                id="patientEmail" 
-                                placeholder="seu.email@exemplo.com" 
-                                required
-                            >
+                            <input type="email" id="patientEmail" placeholder="seu.email@exemplo.com" required>
                         </div>
                         <div class="form-group">
                             <label for="patientPhone">📱 Telefone</label>
-                            <input 
-                                type="tel" 
-                                id="patientPhone" 
-                                placeholder="(11) 99999-9999" 
-                                required
-                            >
+                            <input type="tel" id="patientPhone" placeholder="(11) 99999-9999" required>
                         </div>
                     </div>
 
@@ -451,20 +443,11 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label for="appointmentDate">📆 Data da Consulta</label>
-                            <input 
-                                type="date" 
-                                id="appointmentDate" 
-                                onchange="updateAvailableHours()" 
-                                required
-                            >
+                            <input type="date" id="appointmentDate" onchange="updateAvailableHours()" required>
                         </div>
                         <div class="form-group">
                             <label for="preferredTime">🕐 Hora Preferida</label>
-                            <input 
-                                type="time" 
-                                id="preferredTime" 
-                                required
-                            >
+                            <input type="time" id="preferredTime" required>
                         </div>
                     </div>
 
@@ -479,10 +462,7 @@
                     <!-- Descrição/Motivo -->
                     <div class="form-group">
                         <label for="reason">💬 Motivo da Consulta</label>
-                        <textarea 
-                            id="reason" 
-                            placeholder="Descreva brevemente o motivo da sua consulta..."
-                        ></textarea>
+                        <textarea id="reason" placeholder="Descreva brevemente o motivo da sua consulta..."></textarea>
                     </div>
 
                     <!-- Informações Adicionais -->
@@ -574,7 +554,7 @@
         ];
 
         // Inicializar
-        window.addEventListener('load', function() {
+        window.addEventListener('load', function () {
             generateNextDates();
             generateTimeSlots();
             setupEventListeners();
@@ -670,11 +650,11 @@
                 date.setDate(date.getDate() + i);
 
                 if (date.getDay() !== 0) { // Pula domingos
-                    const dateStr = date.toLocaleDateString('pt-BR', { 
-                        weekday: 'short', 
-                        year: 'numeric', 
-                        month: '2-digit', 
-                        day: '2-digit' 
+                    const dateStr = date.toLocaleDateString('pt-BR', {
+                        weekday: 'short',
+                        year: 'numeric',
+                        month: '2-digit',
+                        day: '2-digit'
                     });
 
                     const dateBtn = document.createElement('div');
@@ -778,4 +758,5 @@
         document.getElementById('appointmentDate').setAttribute('min', today);
     </script>
 </body>
+
 </html>
